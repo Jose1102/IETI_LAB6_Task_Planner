@@ -1,5 +1,4 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react'
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import List from '@mui/material/List';
@@ -9,16 +8,51 @@ import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import ListItemText from '@mui/material/ListItemText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
-import PersonIcon from '@mui/icons-material/Person';
 import AddIcon from '@mui/icons-material/Add';
 import Typography from '@mui/material/Typography';
 import { blue } from '@mui/material/colors';
-import Table from './Table'
-import { tasks } from '../data/task'
+import Tables from './Table'
+import { styled } from '@mui/material/styles';
+import Table from '@mui/material/Table';
+import { tasks } from './AddTask'
+import TableBody from '@mui/material/TableBody';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 import { makeStyles } from '@material-ui/core/styles'
+import { tempOperation } from '../App'
 
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom"
 
+import AddTask from './AddTask'
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: "theme.palette.action.hover",
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
 const useStyles = makeStyles(theme =>({
   
   div : {
@@ -37,20 +71,29 @@ const useStyles = makeStyles(theme =>({
   }
 }))
 
-
-
+let vari = "";
 
 
 
 function SimpleDialog(props) {
-  const { onClose, selectedValue, open } = props;
+  
+  const { onClose, selectedValue2, open } = props;
 
   const handleClose = () => {
-    onClose(selectedValue);
+    onClose(selectedValue2);
+    
   };
 
   const handleListItemClick = (value) => {
     onClose(value);
+    if(value!=undefined){
+      if(value=="addAccount"){
+        console.log('Deberia llevarlo a router')
+        
+        window.location.href='/addTask';  
+      }
+
+    }
   };
 
   return (
@@ -77,20 +120,47 @@ function SimpleDialog(props) {
           <ListItemText primary="Add task" />
         </ListItem>
       </List>
+
+      
     </Dialog>
   );
 }
 
 
 
-export default function Home() {
-  const classes = useStyles()
-  const [open, setOpen] = React.useState(false);
-  const valueTemp = tasks[1];
-  const {name,description} = tasks[0];
-  console.log("entra"+name);
 
-  const [selectedValue, setSelectedValue] = React.useState(name);
+
+export default function Home() {
+  
+  let descValue;
+  let arreglo=[];
+
+  
+  const [prueba, setPrueba] = useState("")
+  
+  const classes = useStyles()
+  const [open, setOpen] = useState(false);
+  
+ 
+
+  const [selectedValue, setSelectedValue] = useState("");
+
+
+  const getByTask = (name) => {
+    
+    return tasks.filter( task => task.name == name);
+  }
+
+
+  const val = getByTask(selectedValue);
+  console.log(val)
+  if(val.length>0){
+    arreglo = val;
+
+  }
+
+  
+  
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -99,27 +169,69 @@ export default function Home() {
   const handleClose = (value) => {
     setOpen(false);
     setSelectedValue(value);
+
+    
   };
 
   return (
-    <div>
+    <div className="container">
       <div className={classes.div}>
         <Typography component='h1' variant='h5'> Tasks </Typography>
         
         <br />
         
-        <Table />
+        <Tables />
       </div>
       <div className={classes.button}>
-        <Button variant="outlined" onClick={handleClickOpen}>
-          Select Task
-        </Button>
+        
         <SimpleDialog
-          selectedValue={selectedValue}
+          selectedValue2={selectedValue}
           open={open}
           onClose={handleClose}
         />
       </div>
+
+      <div className={classes.div}>
+
+        <Typography component='h1' variant='h5'> Consult task </Typography>
+        
+        <br />
+
+        <Button variant="outlined" onClick={handleClickOpen}>
+          Select Task
+        </Button>
+        <br />
+
+      </div>
+
+      
+
+      <TableContainer component={Paper}>
+      <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <TableHead>
+          <TableRow>
+            <StyledTableCell>Name</StyledTableCell>
+            <StyledTableCell align="right">Description</StyledTableCell>
+            <StyledTableCell align="right">Due Date</StyledTableCell>
+            <StyledTableCell align="right">Asigned To</StyledTableCell>
+            <StyledTableCell align="right">Status</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+        {arreglo.map((row) => (
+            <StyledTableRow key={row.name}>
+              <StyledTableCell component="th" scope="row">
+                {row.name}
+              </StyledTableCell>
+              <StyledTableCell align="right">{row.description}</StyledTableCell>
+              <StyledTableCell align="right">{row.dueDate}</StyledTableCell>
+              <StyledTableCell align="right">{row.assignedTo}</StyledTableCell>
+              <StyledTableCell align="right">{row.statusTask}</StyledTableCell>
+            </StyledTableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>     
       
     </div>
     
