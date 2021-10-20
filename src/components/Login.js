@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme =>({
 
 
 
-const Login = (props) => {
+const Login = () => {
 const classes = useStyles()
   const [data, setData] = useState({username:'',password:''})
   const handleChange = (event) => {

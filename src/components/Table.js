@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -30,6 +30,16 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   }));
   
 function Tables() {
+    const [tareas, setTareas] = useState(tasks)
+    useEffect(() =>{
+      let data = localStorage.getItem("array"); 
+      if(data != null){
+        setTareas(JSON.parse(data))
+      }
+
+    }, [])
+
+    
     return (
         <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -43,7 +53,7 @@ function Tables() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {tasks.map((row) => (
+          {tareas.map((row) => (
             <StyledTableRow key={row.name}>
               <StyledTableCell component="th" scope="row">
                 {row.name}

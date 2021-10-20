@@ -76,6 +76,16 @@ let vari = "";
 
 
 function SimpleDialog(props) {
+
+  const [tareas, setTareas] = useState(tasks)
+    useEffect(() =>{
+      let data = localStorage.getItem("array"); 
+      if(data != null){
+        setTareas(JSON.parse(data))
+      }
+
+    }, [])
+
   
   const { onClose, selectedValue2, open } = props;
 
@@ -88,7 +98,6 @@ function SimpleDialog(props) {
     onClose(value);
     if(value!=undefined){
       if(value=="addAccount"){
-        console.log('Deberia llevarlo a router')
         
         window.location.href='/addTask';  
       }
@@ -100,7 +109,7 @@ function SimpleDialog(props) {
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Consultar una tarea</DialogTitle>
       <List sx={{ pt: 0 }}>
-        {tasks.map((tarea) => (
+        {tareas.map((tarea) => (
           <ListItem button onClick={() => handleListItemClick(tarea.name)} key={tarea.name}>
             <ListItemAvatar>
               <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
@@ -132,11 +141,18 @@ function SimpleDialog(props) {
 
 export default function Home() {
   
-  let descValue;
-  let arreglo=[];
+  const [homeSelect, setHomeSelect] = useState(tasks)
+    useEffect(() =>{
+      let data = localStorage.getItem("array"); 
+      if(data != null){
+        setHomeSelect(JSON.parse(data))
+      }
+
+    }, [])
 
   
-  const [prueba, setPrueba] = useState("")
+  let arreglo=[];
+
   
   const classes = useStyles()
   const [open, setOpen] = useState(false);
@@ -148,12 +164,11 @@ export default function Home() {
 
   const getByTask = (name) => {
     
-    return tasks.filter( task => task.name == name);
+    return homeSelect.filter( task => task.name == name);
   }
 
 
   const val = getByTask(selectedValue);
-  console.log(val)
   if(val.length>0){
     arreglo = val;
 

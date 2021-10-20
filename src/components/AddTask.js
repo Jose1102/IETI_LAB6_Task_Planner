@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { makeStyles } from '@material-ui/core/styles'
@@ -63,7 +63,7 @@ const useStyles = makeStyles(theme =>({
   }))
 
 
-export const tasks = [
+export let tasks = [
     {
         name: "Hacer el laboratorio de spti",
         description: "El laboratorio de seguridad",
@@ -79,26 +79,45 @@ export const tasks = [
         assignedTo:  "Jose Castro",
         statusTask: "Close" 
     }
+    
   
 
 ];
 
 
-const  AddTask = ({valor}) => {
-    const [currency, setCurrency] = React.useState('CLS');
+const  AddTask = () => {
 
-    const handleChange = (event) => {
-        setCurrency(event.target.value);
-      };
 
-    const [value, setValue] = React.useState(null);
+    
+    const [data, setData] = useState({name:'',description:'',dueDate:'',assignedTo:'',statusTask:''})
+
 
     const classes = useStyles()
 
     const onSubmit = (event) => {
+        tasks.push({
+            name: data.name,
+            description: data.description,
+            dueDate: data.dueDate,
+            assignedTo:  data.assignedTo,
+            statusTask: data.statusTask 
+        })
+
+
+        localStorage.setItem("array",JSON.stringify( tasks))
+        window.location.href='/home';
    
         
       } 
+
+    const handleChange = (event) => {
+        setData({
+            ...data,
+            [event.target.name]: event.target.value
+          })
+        
+        
+    }
     return (
     <Grid container component='main' className={classes.root}>
       <Container component={Paper} elevation={10} maxWidth='xs' className={classes.container}>
@@ -113,6 +132,7 @@ const  AddTask = ({valor}) => {
                 id="outlined-required"
                 label="Name"
                 name='name'
+                onChange = {handleChange}
                 />
 
                 <br />
@@ -122,6 +142,7 @@ const  AddTask = ({valor}) => {
                 id="outlined-required"
                 label="Description"
                 name='description'
+                onChange = {handleChange}
                 />
 
                 <br />
@@ -130,7 +151,8 @@ const  AddTask = ({valor}) => {
                 required
                 id="outlined-required"
                 label="Date"
-                name='date'
+                name='dueDate'
+                onChange = {handleChange}
                 />
                 <br />
                 <br />
@@ -139,24 +161,18 @@ const  AddTask = ({valor}) => {
                 id="outlined-required"
                 label="Assigned to"
                 name='assignedTo'
+                onChange = {handleChange}
                 />
                 <br />
                 <br />
+
                 <TextField
-                id="filled-select-currency"
-                select
+                required
+                id="outlined-required"
                 label="Status"
-                value={currency}
-                onChange={handleChange}
-                helperText="Please select status"
-                name='status'
-                >
-                {currencies.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                    </MenuItem>
-                ))}
-                </TextField>
+                name='statusTask'
+                onChange = {handleChange}
+                />
                 
                
                 <Button
